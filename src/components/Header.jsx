@@ -1,10 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
+import { HomeIcon } from '@heroicons/react/24/solid';
 
 export default function Header() {
   return (
-    <div className="flex items-center justify-between max-w-6xl mx-auto">
+    <div className="flex items-center justify-between max-w-6xl mx-auto px-3">
       {/* Left side */}
       <div className="h-24 w-24 relative hidden lg:inline-block cursor-pointer">
         <Image
@@ -36,7 +37,17 @@ export default function Header() {
       </div>
 
       {/* Right side */}
-      <h1>Right sides</h1>
+      <div className='flex space-x-4 items-center'>
+        <PlusCircleIcon  class="hidden md:inline-block h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+        <HomeIcon  class="h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+        <Image 
+          src="https://i.pinimg.com/736x/e5/1c/30/e51c30d91a7ac242f487abd61ad7cd12.jpg" 
+          alt="Profile img" 
+          width={40}
+          height={40}
+          className='h-10 w-10 rounded-full object-cover cursor-pointer'
+        />
+      </div>
     </div>
   )
 }
