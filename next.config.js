@@ -4,7 +4,9 @@ const nextConfig = {
     domains: [
       'upload.wikimedia.org',
       'i.pinimg.com',
-      'i.pravatar.cc'
+      'i.pravatar.cc',
+      'images.unsplash.com',
+      'plus.unsplash.com',
     ]
   }
 }
