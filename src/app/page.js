@@ -1,9 +1,13 @@
 import React from "react";
 
+// Components
+import Feed from "@/components/Feed";
+
 export default function Home() {
   return (
-    <main className="">
-      <h1>Home page</h1>
+    <main className="bg-gray-50">
+      {/* Feed */}
+      <Feed />
     </main>
   )
 }
