@@ -6,10 +6,11 @@ export default function Story({user}) {
       <Image 
         src={user.img}
         alt={user.username}
-        width={100}
-        height={100}
+        width={56}
+        height={56}
+        className="h-14 w-14 rounded-full p-[1.5px] border-2 cursor-pointer border-red-500 hover:scale-110 transition-transform duration-200 ease-out"
       />
-      <p>{user.username}</p>
+      <p className="text-xs w-14 truncate">{user.username}</p>
     </div>
   )
 }
