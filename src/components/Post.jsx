@@ -1,5 +1,12 @@
 import Image from "next/image";
-import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { 
+  EllipsisHorizontalIcon, 
+  HeartIcon, 
+  ChatBubbleOvalLeftEllipsisIcon, 
+  BookmarkIcon,
+  FaceSmileIcon 
+} from '@heroicons/react/24/outline';
+
 
 export default function Post({post}) {
   return (
@@ -34,6 +41,23 @@ export default function Post({post}) {
         </div>
         <BookmarkIcon className="btn" />
       </div>
+
+      {/* Post comments */}
+      <p className="p-5 truncate">
+        <span className="font-bold mr-2">{post.username}</span>
+        {post.caption}
+      </p>
+
+      {/* Input box */}
+      <form className="flex items-center p-4">
+        <FaceSmileIcon className="h-7 w-7" />
+        <input 
+          type="text"
+          placeholder="Put your comment..."  
+          className="flex-1 border-none focus:ring-0"
+        />
+        <button className="text-blue-400 font-bold">Post</button>
+      </form>
     </article>
   )
 }
