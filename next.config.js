@@ -7,6 +7,8 @@ const nextConfig = {
       'i.pravatar.cc',
       'images.unsplash.com',
       'plus.unsplash.com',
+      'superviral.com.au',
+      'careeractivate.com',
     ]
   }
 }
