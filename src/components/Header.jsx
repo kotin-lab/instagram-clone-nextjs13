@@ -7,6 +7,7 @@ import { signIn, useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
   const { data: session } = useSession();
+  console.log(session);
 
   return (
     <header className="shadow-sm border-b sticky top-0 bg-white z-50">
