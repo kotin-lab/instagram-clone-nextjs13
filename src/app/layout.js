@@ -3,7 +3,7 @@ import './globals.css';
 
 // Components
 import Header from '@/components/Header';
-import { NextAuthProvider } from './providers';
+import { NextAuthProvider, RecoilProvider } from './providers';
 
 export const metadata = {
   title: 'Instagram App',
@@ -15,10 +15,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <NextAuthProvider>
-          {/* Header */}
-          <Header />
-          
-          {children}
+          <RecoilProvider>            
+            {/* Header */}
+            <Header />
+            
+            {children}
+          </RecoilProvider>
         </NextAuthProvider>
       </body>
     </html>

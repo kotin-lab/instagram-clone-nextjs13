@@ -4,10 +4,12 @@ import Image from 'next/image';
 import { MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { HomeIcon } from '@heroicons/react/24/solid';
 import { signIn, useSession, signOut } from 'next-auth/react';
+import { useRecoilState } from 'recoil';
+import { modalState } from '@/atom/modalAtom';
 
 export default function Header() {
   const { data: session } = useSession();
-  console.log(session);
+  const [open, setOpen] = useRecoilState(modalState);
 
   return (
     <header className="shadow-sm border-b sticky top-0 bg-white z-50">
@@ -33,7 +35,7 @@ export default function Header() {
         {/* Middle */}
         <div className="relative mt-1">
           <div className="absolute top-2 left-2">
-            <MagnifyingGlassIcon class="h-5 w-5 text-gray-500" />
+            <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
           </div>
           <input 
             type="text" 
@@ -44,11 +46,14 @@ export default function Header() {
 
         {/* Right side */}
         <div className='flex space-x-4 items-center'>
-          <HomeIcon  class="h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+          <HomeIcon  className="h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
           {session ? 
             (
               <>
-                <PlusCircleIcon  class="hidden md:inline-block h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+                <PlusCircleIcon  
+                  onClick={() => setOpen(true)}
+                  className="hidden md:inline-block h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" 
+                />
                 <img 
                   src={session.user.image} 
                   alt="Profile img"
