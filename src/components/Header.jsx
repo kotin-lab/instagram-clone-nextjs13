@@ -1,9 +1,13 @@
-import React from 'react';
+'use client';
+
 import Image from 'next/image';
 import { MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { HomeIcon } from '@heroicons/react/24/solid';
+import { signIn, useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
+  const { data: session } = useSession();
+
   return (
     <header className="shadow-sm border-b sticky top-0 bg-white z-50">
       <div className="flex items-center justify-between max-w-6xl mx-auto px-3">
@@ -39,15 +43,25 @@ export default function Header() {
 
         {/* Right side */}
         <div className='flex space-x-4 items-center'>
-          <PlusCircleIcon  class="hidden md:inline-block h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
           <HomeIcon  class="h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
-          <Image 
-            src="https://i.pinimg.com/736x/e5/1c/30/e51c30d91a7ac242f487abd61ad7cd12.jpg" 
-            alt="Profile img" 
-            width={40}
-            height={40}
-            className='h-10 w-10 rounded-full object-cover cursor-pointer'
-          />
+          {session ? 
+            (
+              <>
+                <PlusCircleIcon  class="hidden md:inline-block h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+                <img 
+                  src={session.user.image} 
+                  alt="Profile img"
+                  className='h-10 w-10 rounded-full object-cover cursor-pointer'
+                  onClick={() => {
+                    confirm('You want to Sign out?') && signOut();
+                  }}
+                />
+              </>
+            ) : 
+            (
+              <button onClick={signIn}>Sign in</button>
+            )
+          }
         </div>
       </div>
     </header>

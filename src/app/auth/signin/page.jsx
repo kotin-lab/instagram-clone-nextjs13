@@ -28,10 +28,10 @@ export default async function SignIn() {
             <p className='text-sm italic my-10 text-center'>This app is created for learning purposes</p>
             <button 
               onClick={() => {
-                console.log(provider.id);
                 signIn(provider.id, {callbackUrl: '/'})
               }} 
               className='bg-red-400 text-white rounded-lg p-3 hover:bg-red-500 transition-colors duration-200 ease-out'
+              disabled={!provider.id}
             >
               Sign in with {provider.name}
             </button>
