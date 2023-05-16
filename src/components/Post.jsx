@@ -7,10 +7,28 @@ import {
   FaceSmileIcon 
 } from '@heroicons/react/24/outline';
 import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../../firebase";
 
-
-export default function Post({post}) {
+export default function Post({id, post}) {
   const { data: session} = useSession();
+  const [comment, setComment] = useState('');
+
+  async function handleCommentSubmit(e) {
+    e.preventDefault();
+
+    setComment('');
+    await addDoc(
+      collection(db, 'posts', id, 'comments'),
+      {
+        comment,
+        username: session.user.username,
+        userImage: session.user.image,
+        timestamp: serverTimestamp()
+      }
+    );
+  }
 
   return (
     <article className="bg-white my-7 border rounded-md">
@@ -55,14 +73,20 @@ export default function Post({post}) {
 
       {/* Input box */}
       {session && (
-        <form className="flex items-center p-4">
+        <form onSubmit={handleCommentSubmit} className="flex items-center p-4">
           <FaceSmileIcon className="h-7 w-7" />
           <input 
             type="text"
+            value={comment}
             placeholder="Put your comment..."  
             className="flex-1 border-none focus:ring-0"
+            onChange={e => setComment(e.target.value)}
           />
-          <button className="text-blue-400 font-bold">Post</button>
+          <button 
+            type="submit"
+            className="text-blue-400 font-bold disabled:text-blue-200"
+            disabled={!comment.trim()}
+          >Post</button>
         </form>
       )}
     </article>
