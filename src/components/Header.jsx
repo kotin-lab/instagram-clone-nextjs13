@@ -6,10 +6,12 @@ import { HomeIcon } from '@heroicons/react/24/solid';
 import { signIn, useSession, signOut } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { modalState } from '@/atom/modalAtom';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { data: session } = useSession();
   const [open, setOpen] = useRecoilState(modalState);
+  const router = useRouter();
 
   return (
     <header className="shadow-sm border-b sticky top-0 bg-white z-50">
@@ -21,6 +23,7 @@ export default function Header() {
             fill
             alt='instagram'
             className='object-contain'
+            onClick={() => router.push('/')}
           />
         </div>
         <div className="h-24 w-10 relative lg:hidden cursor-pointer">
@@ -29,6 +32,7 @@ export default function Header() {
             fill
             alt='instagram'
             className='object-contain'
+            onClick={() => router.push('/')}
           />
         </div>
 
@@ -46,7 +50,7 @@ export default function Header() {
 
         {/* Right side */}
         <div className='flex space-x-4 items-center'>
-          <HomeIcon  className="h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+          <HomeIcon onClick={() => router.push('/')} className="h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
           {session ? 
             (
               <>
