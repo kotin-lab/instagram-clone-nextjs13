@@ -9,6 +9,8 @@ const nextConfig = {
       'plus.unsplash.com',
       'superviral.com.au',
       'careeractivate.com',
+      'lh3.googleusercontent.com',
+      'firebasestorage.googleapis.com',
     ]
   }
 }

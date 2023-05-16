@@ -14,7 +14,7 @@ export default function Post({post}) {
       {/* Post Header */}
       <div className="flex items-center p-5">
         <Image
-          src={post.userImg}
+          src={post.profileImg}
           alt="user img"
           width={100}
           height={100}
@@ -26,7 +26,7 @@ export default function Post({post}) {
 
       {/* Post image */}
       <Image 
-        src={post.img}
+        src={post.image}
         alt="post image"
         width={1000}
         height={750}
