@@ -7,13 +7,30 @@ import {
   FaceSmileIcon 
 } from '@heroicons/react/24/outline';
 import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase";
+import Moment from "react-moment";
 
 export default function Post({id, post}) {
   const { data: session} = useSession();
   const [comment, setComment] = useState('');
+  const [comments, setComments] = useState([]);
+
+  // Effects
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      query(
+        collection(db, 'posts', id, 'comments'), 
+        orderBy('timestamp', 'desc')
+      ),
+      snapshot => {
+        setComments(snapshot.docs);
+      }
+    );
+
+    return unsubscribe;
+  }, [id]);
 
   async function handleCommentSubmit(e) {
     e.preventDefault();
@@ -70,6 +87,24 @@ export default function Post({id, post}) {
         <span className="font-bold mr-2">{post.username}</span>
         {post.caption}
       </p>
+      {comments.length > 0 && (
+        <div className="mx-10 max-h-24 scrollbar-none overflow-y-scroll">
+          {comments.map(comment => (
+            <div key={comment.id} className="flex items-center space-between space-x-2 mb-2">
+              <Image 
+                src={comment.data().userImage}
+                alt="user-image"
+                width={100}
+                height={100}
+                className="h-7 w-7 rounded-full object-cover"
+              />
+              <p className="font-semibold">{comment.data().username}</p>
+              <p className="flex-1 truncate">{comment.data().comment}</p>
+              <Moment fromNow>{comment.data().timestamp?.toDate()}</Moment>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Input box */}
       {session && (
