@@ -7,14 +7,15 @@ import {
   FaceSmileIcon 
 } from '@heroicons/react/24/outline';
 import {HeartIcon as HeartIconFilled} from '@heroicons/react/24/solid';
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import Moment from "react-moment";
+import { useRecoilState } from "recoil";
+import { userState } from "@/atom/userAtom";
 
 export default function Post({id, post}) {
-  const { data: session} = useSession();
+  const [currentUser] = useRecoilState(userState);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
@@ -42,26 +43,33 @@ export default function Post({id, post}) {
         setLikes(snapshot.docs);
       }
     );
-  }, []);
+
+    return unsubscribe;
+  }, [id]);
 
   useEffect(() => {
-    const liked = likes.findIndex(like => like.id === session?.user.uid) !== -1;
-    setHasLiked(liked);
-  }, [likes, session]);
+    if (currentUser) {
+      const liked = likes.findIndex(like => like.id === currentUser.uid) !== -1;
+      setHasLiked(liked);
+    }
+  }, [likes, currentUser]);
 
   // Handlers
   async function handleLikePost() {
-    if (hasLiked) {
-      await deleteDoc(doc(db, 'posts', id, 'likes', session.user.uid));
-    } else {
-      await setDoc(
-        doc(db, 'posts', id, 'likes', session.user.uid),
-        {
-          username: session.user.username
-        }
-      );
+    try {
+      if (hasLiked) {
+        await deleteDoc(doc(db, 'posts', id, 'likes', currentUser.uid));
+      } else {
+        await setDoc(
+          doc(db, 'posts', id, 'likes', currentUser.uid),
+          {
+            username: currentUser.username
+          }
+        );
+      }
+    } catch (error) {
+      console.log('Error: likePost - ', error);
     }
-
   }
 
   async function handleCommentSubmit(e) {
@@ -72,8 +80,8 @@ export default function Post({id, post}) {
       collection(db, 'posts', id, 'comments'),
       {
         comment,
-        username: session.user.username,
-        userImage: session.user.image,
+        username: currentUser.username,
+        userImage: currentUser.userImg,
         timestamp: serverTimestamp()
       }
     );
@@ -90,7 +98,7 @@ export default function Post({id, post}) {
           height={100}
           className="h-12 w-12 rounded-full object-cover border p-1 mr-3"
         /> 
-        <post className="inline-block font-bold truncate flex-1">{post.username}</post>
+        <p className="inline-block font-bold truncate flex-1">{post.username}</p>
         <EllipsisHorizontalIcon className="w-8 h-8 rounded-full px-0.5 cursor-pointer hover:bg-gray-50 duration-200 ease-out hover:scale-110 transition-all" />
       </div>
 
@@ -104,7 +112,7 @@ export default function Post({id, post}) {
       />
 
       {/* Post buttons */}
-      {session && (
+      {currentUser && (
         <div className="flex items-center justify-between px-4 pt-4">
           <div className="inline-flex space-x-4 items-center">
             {hasLiked ? (
@@ -146,7 +154,7 @@ export default function Post({id, post}) {
       )}
 
       {/* Input box */}
-      {session && (
+      {currentUser && (
         <form onSubmit={handleCommentSubmit} className="flex items-center p-4">
           <FaceSmileIcon className="h-7 w-7" />
           <input 

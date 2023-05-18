@@ -1,9 +1,8 @@
-import { SessionProvider } from 'next-auth/react';
 import './globals.css';
 
 // Components
 import Header from '@/components/Header';
-import { NextAuthProvider, RecoilProvider } from './providers';
+import { RecoilProvider } from './providers';
 
 export const metadata = {
   title: 'Instagram App',
@@ -14,14 +13,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <NextAuthProvider>
-          <RecoilProvider>            
-            {/* Header */}
-            <Header />
-            
-            {children}
-          </RecoilProvider>
-        </NextAuthProvider>
+        <RecoilProvider>            
+          {/* Header */}
+          <Header />
+          
+          {children}
+        </RecoilProvider>
       </body>
     </html>
   )

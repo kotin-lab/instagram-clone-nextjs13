@@ -3,15 +3,49 @@
 import Image from 'next/image';
 import { MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { HomeIcon } from '@heroicons/react/24/solid';
-import { signIn, useSession, signOut } from 'next-auth/react';
 import { useRecoilState } from 'recoil';
 import { modalState } from '@/atom/modalAtom';
 import { useRouter } from 'next/navigation';
+import { userState } from '@/atom/userAtom';
+import { useEffect } from 'react';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/../firebase';
 
 export default function Header() {
-  const { data: session } = useSession();
+  const [currentUser, setCurrentUser] = useRecoilState(userState);
   const [open, setOpen] = useRecoilState(modalState);
   const router = useRouter();
+  const auth = getAuth();
+  
+  // Effects
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      console.log(user);
+      if (user) {
+        const uid = user.providerData[0].uid;
+        
+        async function fetchUser() {
+          const docRef = doc(db, 'users', uid);
+          const docSnap = await getDoc(docRef);
+  
+          if (docSnap.exists()) {
+            setCurrentUser(docSnap.data());
+            console.log(docSnap.data());
+          }
+        };
+        fetchUser();
+      }
+    });
+    
+    return unsubscribe;
+  }, [auth]);
+  
+  // Handlers
+  function handleSignOut() {
+    signOut(auth);
+    setCurrentUser(null);
+  }
 
   return (
     <header className="shadow-sm border-b sticky top-0 bg-white z-50">
@@ -51,25 +85,27 @@ export default function Header() {
         {/* Right side */}
         <div className='flex space-x-4 items-center'>
           <HomeIcon onClick={() => router.push('/')} className="h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
-          {session ? 
+          {currentUser ? 
             (
               <>
                 <PlusCircleIcon  
                   onClick={() => setOpen(true)}
                   className="hidden md:inline-block h-5 w-5 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" 
                 />
-                <img 
-                  src={session.user.image} 
+                <Image 
+                  src={currentUser.userImg} 
                   alt="Profile img"
+                  width={100}
+                  height={100}
                   className='h-10 w-10 rounded-full object-cover cursor-pointer'
                   onClick={() => {
-                    confirm('You want to Sign out?') && signOut();
+                    confirm('You want to Sign out?') && handleSignOut();
                   }}
                 />
               </>
             ) : 
             (
-              <button onClick={signIn}>Sign in</button>
+              <button onClick={() => router.push('/auth/signin')}>Sign in</button>
             )
           }
         </div>

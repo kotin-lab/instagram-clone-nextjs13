@@ -1,8 +1,10 @@
 // Components
 import { useEffect, useState } from "react";
-import Post from "./Post";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../firebase";
+
+// Components
+import Post from "./Post";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);

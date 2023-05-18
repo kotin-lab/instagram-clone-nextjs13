@@ -1,41 +1,38 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import minifaker from 'minifaker';
-import 'minifaker/locales/en';
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { userState } from '@/atom/userAtom';
 
 // Components
 import Story from './Story';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 export default function Stories() {
   const [storyUsers, setStoryUsers] = useState([]);
-  const {data: session} = useSession();
-  const user = {
-    ...session?.user,
-    img: session?.user.image
-  };
+  const [currentUser] = useRecoilState(userState);
 
   // Effect
   useEffect(() => {
-    const storyUsers = minifaker.array(20, index => (
-      {
-        id: index,
-        username: minifaker.username({locale: 'en'}).toLowerCase(),
-        img: `https://i.pravatar.cc/150?img=${Math.ceil(Math.random() * 70)}`
-      }
-    ));
+    const unsubscribe = onSnapshot(
+      query(
+        collection(db, 'users'),
+        where('uid', '!=', currentUser.uid)
+      ),      
+      snapshot => setStoryUsers(snapshot.docs)
+    );
 
-    setStoryUsers(storyUsers);
+    return unsubscribe;
   }, []);
 
   return (
     <div className='flex space-x-2 p-6 bg-white mt-8 border border-gray-200 overflow-x-scroll rounded-sm scrollbar-none'>
-      {session && (
-        <Story user={user} isUser={true} />
+      {currentUser && (
+        <Story user={currentUser} isUser={true} />
       )}
       {storyUsers.map(user => (
-        <Story key={user.id} user={user} />
+        <Story key={user.id} user={user.data()} />
       ))}
     </div>
   )
