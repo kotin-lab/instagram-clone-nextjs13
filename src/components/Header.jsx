@@ -21,7 +21,6 @@ export default function Header() {
   // Effects
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
-      console.log(user);
       if (user) {
         const uid = user.providerData[0].uid;
         
@@ -31,7 +30,6 @@ export default function Header() {
   
           if (docSnap.exists()) {
             setCurrentUser(docSnap.data());
-            console.log(docSnap.data());
           }
         };
         fetchUser();
@@ -48,7 +46,7 @@ export default function Header() {
   }
 
   return (
-    <header className="shadow-sm border-b sticky top-0 bg-white z-50">
+    <header className="shadow-sm border-b sticky top-0 bg-white z-40">
       <div className="flex items-center justify-between max-w-6xl mx-auto px-3">
         {/* Left side */}
         <div className="h-24 w-24 relative hidden lg:inline-block cursor-pointer">

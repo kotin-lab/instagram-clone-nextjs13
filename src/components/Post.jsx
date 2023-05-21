@@ -13,6 +13,7 @@ import { db } from "../../firebase";
 import Moment from "react-moment";
 import { useRecoilState } from "recoil";
 import { userState } from "@/atom/userAtom";
+import { postCommentsModalState } from "@/atom/postCommentsModalState";
 
 export default function Post({id, post}) {
   const [currentUser] = useRecoilState(userState);
@@ -20,6 +21,7 @@ export default function Post({id, post}) {
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
+  const [commentsModalState, setCommentsModalState] = useRecoilState(postCommentsModalState);
 
   // Effects
   useEffect(() => {
@@ -120,20 +122,26 @@ export default function Post({id, post}) {
             ) : (
               <HeartIcon onClick={handleLikePost} className="btn" />
             )}
-            <ChatBubbleOvalLeftEllipsisIcon className="btn" />
+            <ChatBubbleOvalLeftEllipsisIcon 
+              className="btn" 
+              onClick={() => setCommentsModalState({
+                open: true,
+                postId: id
+              })}
+            />
           </div>
           <BookmarkIcon className="btn" />
         </div>
       )}
 
       {/* Post comments */}
-      <p className="p-5 truncate">
+      <div className="p-5 truncate">
         {likes.length > 0 && (
           <p className="font-bold mb-1">{likes.length} likes</p>
         )}
         <span className="font-bold mr-2">{post.username}</span>
         {post.caption}
-      </p>
+      </div>
       {comments.length > 0 && (
         <div className="mx-10 max-h-24 scrollbar-none overflow-y-scroll">
           {comments.map(comment => (

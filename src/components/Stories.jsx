@@ -15,16 +15,22 @@ export default function Stories() {
 
   // Effect
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(
+    let docRef = collection(db, 'users');
+
+    if (currentUser) {
+      docRef = query(
         collection(db, 'users'),
         where('uid', '!=', currentUser.uid)
-      ),      
+      );
+    }
+
+    const unsubscribe = onSnapshot(
+      docRef,      
       snapshot => setStoryUsers(snapshot.docs)
     );
 
     return unsubscribe;
-  }, []);
+  }, [currentUser]);
 
   return (
     <div className='flex space-x-2 p-6 bg-white mt-8 border border-gray-200 overflow-x-scroll rounded-sm scrollbar-none'>
