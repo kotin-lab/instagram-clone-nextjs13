@@ -14,8 +14,10 @@ import Moment from "react-moment";
 import { useRecoilState } from "recoil";
 import { userState } from "@/atom/userAtom";
 import { postCommentsModalState } from "@/atom/postCommentsModalState";
+import { getAuth } from "firebase/auth";
 
 export default function Post({id, post}) {
+  const auth = getAuth();
   const [currentUser] = useRecoilState(userState);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
@@ -65,7 +67,8 @@ export default function Post({id, post}) {
         await setDoc(
           doc(db, 'posts', id, 'likes', currentUser.uid),
           {
-            username: currentUser.username
+            uid: auth.currentUser.uid,
+            username: currentUser.username,
           }
         );
       }
@@ -82,6 +85,7 @@ export default function Post({id, post}) {
       collection(db, 'posts', id, 'comments'),
       {
         comment,
+        uid: auth.currentUser.uid,
         username: currentUser.username,
         userImage: currentUser.userImg,
         timestamp: serverTimestamp()
@@ -105,13 +109,15 @@ export default function Post({id, post}) {
       </div>
 
       {/* Post image */}
-      <Image 
-        src={post.image}
-        alt="post image"
-        width={1000}
-        height={750}
-        className="object-cover w-full"
-      />
+      {post.image && (
+        <Image 
+          src={post.image}
+          alt="post image"
+          width={1000}
+          height={750}
+          className="object-cover w-full"
+        />
+      )}
 
       {/* Post buttons */}
       {currentUser && (
