@@ -2,7 +2,6 @@
 
 import { userState } from '@/atom/userAtom';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import minifaker from 'minifaker';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
